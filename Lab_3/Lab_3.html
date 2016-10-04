@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+
+    <style type="text/css">
+      body {
+          background-color: white;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <canvas id="canvas-for-ball" style="border:1px solid #000000;"></canvas>
+
+    <script type="text/javascript">
+      // Gets a handle to the element with id canvasOne.
+      var canvas = document.getElementById("canvas-for-ball");
+      // Get a 2D context for the canvas.
+      var ctx = canvas.getContext("2d");
+      
+      var gravity = 0.1; // gravity
+      var bouncing = 0.8;
+      var friction = 0.1;
+
+
+      var xvector = 1;
+      var yvector = 1;
+
+      // The vertical location of the ball.
+      var y = 10;
+      var ball = {
+            //Ball's Attributes
+            x: 50
+            , y: 50
+            , r: 25
+            //Ball's Functions
+            , draw: function () {
+                
+                //Draw circle
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r*0.9, 0, Math.PI * 2, false);
+                ctx.stroke();
+            }
+            , move: function (xpos, ypos) {
+                //Change circle location
+                this.x = xpos;
+                this.y = ypos;
+                //Call draw method to redraw circle
+                this.draw();
+            }
+            , resize: function (radius) {
+                //Change radius to arg
+                this.r = radius;
+                //Call draw method to redraw circle
+                this.draw();
+            }
+            , splitself: function (slices) {
+                //Call draw method to redraw circle
+                this.draw();
+                //Check if there is more than one slice required
+                if (slices > 1) {
+                    //For every slice
+                    for (var i = 1; i < (slices + 1); i++) {
+                        ctx.beginPath();
+                        //Starting from the centre
+                        ctx.moveTo(this.x, this.y)
+                        //Line To from x the distance of the radius times cosine of the radians(depending on the number of slices required), same for y (using sine instead of cosine)
+                        ctx.lineTo(this.x + this.r * Math.cos(((Math.PI * 2) / slices) * i), this.y - this.r * Math.sin(((Math.PI * 2) / slices) * i));
+                        ctx.closePath();
+                        ctx.stroke();
+                    }
+                }
+            }
+        };
+
+      // A function to repeat every time the animation loops.
+      function repeatme() {
+        //Clear Canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Draw the ball (stroked, not filled).
+        ball.splitself(50);
+        
+        if ((ball.y > canvas.height - (ball.r +1)) || (ball.y < (ball.r))){
+          // Update the y location.
+          yvector *= -1;
+          
+        }
+        if ((ball.x > canvas.width - (ball.r+1)) || (ball.x < (ball.r))){
+          // Update the y location.
+          xvector *= -1;
+        }
+        ball.move((ball.x += xvector), (ball.y += yvector));
+        
+        window.requestAnimationFrame(repeatme);
+      }
+
+      function repeatmeBouncy() {
+        //Clear Canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Draw the ball (stroked, not filled).
+        ball.splitself(25);
+        yvector += gravity;
+        // handle bouncing
+        if (ball.y > canvas.height - ball.r){
+          ball.y = canvas.height - ball.r;
+          yvector *= -bouncing;
+        }
+        if (ball.x > canvas.width - ball.r || ball.x < ball.r){
+          xvector +=friction;
+          xvector *= -1;
+        }
+
+
+        ball.move((ball.x += xvector), (ball.y += yvector));
+        window.requestAnimationFrame(repeatmeBouncy);
+      
+
+
+
+      }
+      
+      // Get the animation going.
+      //repeatme();
+    </script>
+
+  </body>
+
+</html>
