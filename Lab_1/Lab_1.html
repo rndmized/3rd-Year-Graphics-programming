@@ -1,35 +1,82 @@
 <!DOCTYPE html>
-
 <html>
 
-  <head>
+<head>
     <meta charset="UTF-8">
     <title>Canvas</title>
-
     <style type="text/css">
-      body {
-          background-color: white;
-      }
+    body {
+        background-color: white;
+    }
     </style>
+</head>
 
-  </head>
-
-  <body>
-
-    <canvas id="canvasOne"></canvas>
-
+<body>
+    <canvas id="canvasOne" height="700" width="700" style="border:1px solid black;"></canvas>
     <script type="text/javascript">
-      // Gets a handle to the element with id canvasOne.
-      var canvas = document.getElementById("canvasOne");
-      // Set the canvas up for drawing in 2D.
-      var ctx = canvas.getContext("2d");
-      // Set the fill colour to bright red.
-      ctx.fillStyle = "rgb(255, 0, 0)";
-      // Create a filled rectangle at co-ordinates (10,10)
-      // with height and width set to 100.
-      ctx.fillRect(10, 10, 100, 100);
-    </script>
+    // Gets a handle to the element with id canvasOne.
+    var canvas = document.getElementById("canvasOne");
+    // Set the canvas up for drawing in 2D.
+    var ctx = canvas.getContext("2d");
+    // Set the fill colour to bright red.
+    ctx.fillStyle = "rgb(0, 0, 255)";
+    // Create a filled rectangle at co-ordinates (10,10)
+    // with height and width set to 100.
+    ctx.fillRect(10, 10, 250, 100);
 
-  </body>
+    ctx.fillStyle = "rgba(255, 0, 0,0.6)";
+    ctx.fillRect(30, 30, 250, 100);
+
+
+    ctx.beginPath();
+    ctx.arc(100, 200, 50, 0, Math.PI * 2, false);
+    ctx.fillStyle = "rgb(0, 255, 0)";
+    ctx.fill();
+    ctx.closePath();
+
+    ctx.beginPath();
+    ctx.arc(230, 200, 50, 0, Math.PI * 2, false);
+    ctx.fillStyle = "rgb(150, 110, 7)";
+    ctx.fill();
+    ctx.closePath();
+
+
+    ctx.fillStyle = "rgb(0, 155, 255)";
+    ctx.fillRect(300, 150, 100, 100);
+    ctx.beginPath();
+    ctx.arc(350, 200, 50, 0, Math.PI * 2, false);
+    ctx.fillStyle = "purple";
+    ctx.fill();
+    ctx.closePath();
+
+
+
+
+    //Pacman
+    var newx = 100;
+    var newy = 340;
+    // An arc with an opening at the right for the mouth
+    ctx.beginPath();
+    ctx.arc(newx, newy, 50, 0.2 * Math.PI, 1.8 * Math.PI, false);
+    // The mouth
+    // A line from the end of the arc to the centre
+    ctx.lineTo(newx, newy);
+    // A line from the centre of the arc to the start
+    ctx.closePath();
+    // Fill the pacman shape with yellow
+    ctx.fillStyle = "yellow";
+    ctx.fill();
+    // Draw the black outline (optional)
+    ctx.stroke();
+
+    var xeye = newx + (25 * (Math.cos(Math.PI * 1.6)));
+    var yeye = newy + (25 * (Math.sin(Math.PI * 1.5)));
+    ctx.beginPath();
+    ctx.arc(xeye, yeye, 5, 0, Math.PI * 2, false);
+    ctx.fillStyle = "black";
+    ctx.fill();
+    ctx.closePath();
+    </script>
+</body>
 
 </html>
