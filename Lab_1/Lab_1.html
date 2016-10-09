@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <canvas id="canvasOne" height="700" width="700" style="border:1px solid black;"></canvas>
+    <canvas id="canvasOne" height="700" width="700" style="border:1px solid black;"></canvas> 
     <script type="text/javascript">
     // Gets a handle to the element with id canvasOne.
     var canvas = document.getElementById("canvasOne");
@@ -21,26 +21,28 @@
     // Set the fill colour to bright red.
     ctx.fillStyle = "rgb(0, 0, 255)";
     // Create a filled rectangle at co-ordinates (10,10)
-    // with height and width set to 100.
+    // with height and width set to 250 and 100.
     ctx.fillRect(10, 10, 250, 100);
-
+    // Create a filled transparent-ish rectangle at co-ordinates (30,30)
+    // with height and width set to 250 and 100.
     ctx.fillStyle = "rgba(255, 0, 0,0.6)";
     ctx.fillRect(30, 30, 250, 100);
-
-
+    // Create a filled circle at co-ordinates (100,200)
+    // with radius set to 50.
     ctx.beginPath();
     ctx.arc(100, 200, 50, 0, Math.PI * 2, false);
     ctx.fillStyle = "rgb(0, 255, 0)";
     ctx.fill();
     ctx.closePath();
-
+    // Create a filled circle at co-ordinates (230,200)
+    // with radius set to 50.
     ctx.beginPath();
     ctx.arc(230, 200, 50, 0, Math.PI * 2, false);
     ctx.fillStyle = "rgb(150, 110, 7)";
     ctx.fill();
     ctx.closePath();
-
-
+    // Create a filled rectangle and a circle inside it at co-ordinates (300,150)
+    // with radius set to 50 and rect height and width set to 100.
     ctx.fillStyle = "rgb(0, 155, 255)";
     ctx.fillRect(300, 150, 100, 100);
     ctx.beginPath();
@@ -48,9 +50,6 @@
     ctx.fillStyle = "purple";
     ctx.fill();
     ctx.closePath();
-
-
-
 
     //Pacman
     var newx = 100;
@@ -66,13 +65,15 @@
     // Fill the pacman shape with yellow
     ctx.fillStyle = "yellow";
     ctx.fill();
-    // Draw the black outline (optional)
+    // Draw the black outline
     ctx.stroke();
-
+    //Set x and y coordinates for the eye (Relative to pacman position)
     var xeye = newx + (25 * (Math.cos(Math.PI * 1.6)));
     var yeye = newy + (25 * (Math.sin(Math.PI * 1.5)));
+    //Draw a circle
     ctx.beginPath();
     ctx.arc(xeye, yeye, 5, 0, Math.PI * 2, false);
+    //Fill it black
     ctx.fillStyle = "black";
     ctx.fill();
     ctx.closePath();
