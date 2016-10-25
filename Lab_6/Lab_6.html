@@ -8,14 +8,16 @@
 </head>
 
 <body>
-    <canvas id="transcan" style="border:1px solid #000000;" height="600" width="800"></canvas>
+    <canvas id="transcan" style="border:1px solid #000000;" height="465" width="465"></canvas>
     <script type="text/javascript">
     var canvas = document.getElementById('transcan');
     var ctx = canvas.getContext('2d');
 
-    var nosteps = 0;
-    ctx.translate(30, 30);
 
+
+    var nosteps = 0;
+    var fontSize = 15;
+    ctx.translate(30, 30);
 
 
     function Pacman(size) {
@@ -57,18 +59,44 @@
         }
     }
 
+    function rotatingText() {
+
+    	if(fontSize>25){
+    		fontSize =15;
+    	}
+    	fontSize +=1;
+    	ctx.font= fontSize +"px Georgia";
+		ctx.fillText("Rotating!!",canvas.width/2 -65, canvas.height/2);
+		console.log("Rotating");
+
+    }
+
+
 
     function clear() {
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        path();
+        if ((nosteps > 390) && (nosteps < 400)){
+        	rotatingText();	
+
+        }
         ctx.restore();
+
+    }
+
+    function path() {
+        ctx.rect(canvas.offsetLeft + pac.r + 30, canvas.offsetTop + pac.r + 30, canvas.height - (pac.r) - (110), canvas.width - (pac.r) - (110));
+        ctx.stroke();
+
     }
 
 
     function repeatme() {
         //Clear Canvas
-        ctx.translate(1, 0);
+        //ctx.translate(1, 0);
+        ctx.transform(1, 0, 0, 1, 1, 0);
         clear();
         if (pac.open) {
             pac.draw(false)
@@ -78,19 +106,19 @@
 
         nosteps += 1;
         if (nosteps == 400) {
-            ctx.rotate(90*((2*Math.PI)/360));
+            ctx.transform(Math.cos(90 * ((2 * Math.PI) / 360)), Math.sin(90 * ((2 * Math.PI) / 360)), -1 * (Math.sin(90 * ((2 * Math.PI) / 360))), Math.cos(90 * ((2 * Math.PI) / 360)), 0, 0);
+            //ctx.rotate(90*((2*Math.PI)/360));
             clear();
             nosteps = 0;
         }
-        console.log(nosteps);
+        
         //Recursive call
         window.requestAnimationFrame(repeatme);
     }
 
     var pac = new Pacman(25);
-
     pac.draw(true);
-    console.log(pac.open);
+
     repeatme();
     </script>
 </body>
