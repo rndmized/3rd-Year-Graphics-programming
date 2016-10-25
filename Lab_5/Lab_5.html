@@ -162,33 +162,6 @@
         dx = ball[1].x - ball[0].x;
         dy = ball[1].y - ball[0].y;
 
-        /* var collision_angle = Math.atan2(dx, dy);
-
-         var magnitude_1 = Math.sqrt(balls[0].xspeed * balls[0].xspeed + balls[0].yspeed * balls[0].yspeed);
-
-         var magnitude_2 = Math.sqrt(balls[1].xspeed * balls[1].xspeed + balls[1].yspeed * balls[1].yspeed);
-
-         var direction_1 = Math.atan2(balls[0].yspeed, balls[0].xspeed);
-
-         var direction_2 = Math.atan2(balls[1].yspeed, balls[1].xspeed);
-
-         var new_xvel_1 = magnitude_1 * Math.cos(direction_1 - collision_angle);
-         var new_yvel_1 = magnitude_1 * Math.sin(direction_1 - collision_angle);
-         var new_xvel_2 = magnitude_2 * Math.cos(direction_2 - collision_angle);
-         var new_yvel_2 = magnitude_2 * Math.sin(direction_2 - collision_angle);
-
-         final_xVel_1 = ((balls[0].mass - balls[1].mass) * new_xvel_1 + (balls[1]. mass + balls[1].mass) * new_xvel_2) / (balls[0].mass + balls[1].mass);
-         final_xVel_2 = ((balls[0].mass - balls[0].mass) * new_xvel_1 + (balls[1]. mass + balls[0].mass) * new_xvel_2) / (balls[0].mass + balls[1].mass);
-
-         final_yVel_1 = new_yvel_1;
-         final_yVel_2 = new_yvel_2;
-
-         balls[0].xspeed = Math.cos(collision_angle) + final_xVel_1 + Math.cos(collision_angle + Math.PI / 2) * final_xVel_1;
-         balls[0].yspeed = Math.sin(collision_angle) + final_xVel_1 + Math.sin(collision_angle + Math.PI / 2) * final_yVel_1;
-         balls[1].xspeed = Math.cos(collision_angle) + final_xVel_2 + Math.cos(collision_angle + Math.PI / 2) * final_xVel_2;
-         balls[1].yspeed = Math.sin(collision_angle) + final_xVel_2 + Math.sin(collision_angle + Math.PI / 2) * final_yVel_2;*/
-
-
         var angle = Math.atan2(dy, dx)
 
         var sp1 = Math.sqrt(ball[0].xspeed * ball[0].xspeed + ball[0].yspeed * ball[0].yspeed);
@@ -254,17 +227,22 @@
             if ((balls[i].y > canvas.height - (balls[i].r + 1)) || (balls[i].y < (balls[i].r))) {
                 // Update the y vector.
                 balls[i].yspeed *= -1;
+                balls[i].y += balls[i].yspeed;
 
             }
             // handle bouncing and (x)border collision
             if ((balls[i].x > canvas.width - (balls[i].r + 1)) || (balls[i].x < (balls[i].r))) {
                 // Update the xvector
                 balls[i].xspeed *= -1;
+                balls[i].x += balls[i].xspeed;
             }
-            if (intersection(ball1, ball2)) {
-                bounce(balls);
-                console.log("collision");
-            }
+        
+                if (intersection(balls[0], balls[1])) {
+                    var collisionBalls = [balls[0],balls[1]];
+                    bounce(collisionBalls);
+                    console.log("collision");
+                }
+            
             //Move ball to next position (*5 to increment vectors just in this function)
             balls[i].move((balls[i].x += balls[i].xspeed), (balls[i].y += balls[i].yspeed));
 

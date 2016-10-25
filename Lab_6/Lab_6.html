@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Transformations</title>
+    <meta charset="UTF-8">
+    <style type="text/css"></style>
+</head>
+
+<body>
+    <canvas id="transcan" style="border:1px solid #000000;" height="600" width="800"></canvas>
+    <script type="text/javascript">
+    var canvas = document.getElementById('transcan');
+    var ctx = canvas.getContext('2d');
+
+    var nosteps = 0;
+    ctx.translate(30, 30);
+
+
+
+    function Pacman(size) {
+
+        this.x = 0;
+        this.y = 0;
+        this.r = size;
+        this.open;
+        this.draw = function(open) {
+            this.open = open;
+            // An arc with an opening at the right for the mouth
+            ctx.beginPath();
+            if (open) {
+                ctx.arc(this.x, this.y, this.r, 0.2 * Math.PI, 1.8 * Math.PI, false);
+            } else {
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+            }
+
+            // The mouth
+            // A line from the end of the arc to the centre
+            ctx.lineTo(this.x, this.y);
+            // A line from the centre of the arc to the start
+            ctx.closePath();
+            // Fill the pacman shape with yellow
+            ctx.fillStyle = "yellow";
+            ctx.fill();
+            // Draw the black outline
+            ctx.stroke();
+            //Set x and y coordinates for the eye (Relative to pacman position)
+            var x_eye = this.x + ((this.r / 2) * (Math.cos(Math.PI * 1.6)));
+            var y_eye = this.y + ((this.r / 2) * (Math.sin(Math.PI * 1.5)));
+            //Draw a circle
+            ctx.beginPath();
+            ctx.arc(x_eye, y_eye, this.r / 10, 0, Math.PI * 2, false);
+            //Fill it black
+            ctx.fillStyle = "black";
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+
+
+    function clear() {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+    }
+
+
+    function repeatme() {
+        //Clear Canvas
+        ctx.translate(1, 0);
+        clear();
+        if (pac.open) {
+            pac.draw(false)
+        } else {
+            pac.draw(true);
+        }
+
+        nosteps += 1;
+        if (nosteps == 400) {
+            ctx.rotate(90*((2*Math.PI)/360));
+            clear();
+            nosteps = 0;
+        }
+        console.log(nosteps);
+        //Recursive call
+        window.requestAnimationFrame(repeatme);
+    }
+
+    var pac = new Pacman(25);
+
+    pac.draw(true);
+    console.log(pac.open);
+    repeatme();
+    </script>
+</body>
+
+</html>
