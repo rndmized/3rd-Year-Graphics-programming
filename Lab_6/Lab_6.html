@@ -14,7 +14,7 @@
     var ctx = canvas.getContext('2d');
 
 
-
+    var animationTime =0;
     var nosteps = 0;
     var fontSize = 15;
     ctx.translate(30, 30);
@@ -87,6 +87,7 @@
     }
 
     function path() {
+        //Draw a square in the canvas
         ctx.rect(canvas.offsetLeft + pac.r + 30, canvas.offsetTop + pac.r + 30, canvas.height - (pac.r) - (110), canvas.width - (pac.r) - (110));
         ctx.stroke();
 
@@ -98,9 +99,11 @@
         //ctx.translate(1, 0);
         ctx.transform(1, 0, 0, 1, 1, 0);
         clear();
-        if (pac.open) {
+        if (pac.open && animationTime == 9) {
+            animationTime =0;
             pac.draw(false)
         } else {
+            animationTime++;
             pac.draw(true);
         }
 
