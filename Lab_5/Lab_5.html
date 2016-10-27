@@ -236,13 +236,13 @@
                 balls[i].xspeed *= -1;
                 balls[i].x += balls[i].xspeed;
             }
-        
+
                 if (intersection(balls[0], balls[1])) {
                     var collisionBalls = [balls[0],balls[1]];
                     bounce(collisionBalls);
                     console.log("collision");
                 }
-            
+
             //Move ball to next position (*5 to increment vectors just in this function)
             balls[i].move((balls[i].x += balls[i].xspeed), (balls[i].y += balls[i].yspeed));
 
