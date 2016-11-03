@@ -21,18 +21,27 @@
         var ctx = canvas.getContext("2d");
         //"Physics" variables
         var gravity = 0.1; // gravity
-        var bouncing = 0.8; //Bounce factor
-        var friction = 0.1; //"Friction"
+
+        var iMax = 7;
+        var jMax = 8;
+        var orbs = new Array();
+
+        for (i = 0; i < iMax; i++) {
+            orbs[i] = new Array();
+            for (j = 0; j < jMax; j++) {
+                orbs[i][j] = new Ball(50 * (i + 1), 50 * -(j + 1), 25, 1);
+            }
+        }
 
         //Ball Object
         function Ball(x, y, r, vec) {
-
             this.x = x;
             this.y = y;
             this.r = r;
             this.yspeed = vec;
             this.color = "white"
-                //Ball's Functions
+            this.selected = false;
+            //Ball's Functions
             this.draw = function() {
                 //Draw circle
                 ctx.beginPath();
@@ -60,38 +69,24 @@
             };
         }
 
-        var ball1 = new Ball(25, 150, 25, 1);
-        ball1.setColor("purple");
-        var ball2 = new Ball(25, 350, 25, -1);
-        ball2.setColor("yellow");
-        var ball3 = new Ball(25, 250, 25, -1)
-        ball3.setColor("green");
-        var ball4 = new Ball(25, 0, 25, 1);
-        ball4.setColor("red");
-        var ball5 = new Ball(25, 100, 25, -1);
-        ball5.setColor("orange");
-        var ball6 = new Ball(25, 50, 25, -1);
-        ball6.setColor("cyan");
-        var ball7 = new Ball(25, 0, 25, -1);
-        ball7.setColor("magenta");
-        var ball8 = new Ball(25, -50, 25, -1);
-        ball8.setColor("blue");
-        var balls = [ball1, ball2, ball3, ball4, ball5, ball6, ball7, ball8];
-
-
 
 
         canvas.addEventListener("click", function(event) {
             console.log("click");
-            temp = -1;
+            iTemp = -1;
+            jTemp = -1;
             dummyBall = new Ball(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop, 1, 0);
-            for (var i = 0; i < balls.length; i++) {
-                if (Math.sqrt((balls[i].x - dummyBall.x) * (balls[i].x - dummyBall.x) + (balls[i].y - dummyBall.y) * (balls[i].y - dummyBall.y)) < balls[i].r) {
-                    temp = i;
+            for (var i = 0; i < iMax; i++) {
+                for (var j = 0; j < jMax; i++) {
+                  var b1 = orbs[i][j].x - dummyBall.x;
+                    if (Math.sqrt((b1*b1) + (b1*b1)) < orbs[i][j].r) {
+                        iTemp = i;
+                        jTemp = j;
+                    }
                 }
             }
-            var uball = balls.splice(temp, 1);
-            balls.push(new Ball(25, -25, 25, 1));
+            var uball = orbs.splice(iTemp, jTemp, 1);
+            orbs.push(new Ball(50 * (iTemp + 1), -25, 25, 1));
             //ball1.move(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
         });
 
@@ -113,38 +108,38 @@
             return true;
         }
 
-        // A function to repeat every time the animation loops.
-        function repeatme() {
+
+        function animation() {
             //Clear Canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (var i = 0; i < balls.length; i++) {
-                balls[i].yspeed = 1;
-                for (var j = 0; j < balls.length; j++) {
-                    if (i != j) {
-                        if (intersection(balls[i], balls[j])) {
-                            if (balls[i].y < balls[j].y) {
-                                balls[i].yspeed = 0;
+            for (var i = 0; i < iMax; i++) {
+                for (var j = 0; j < jMax; j++) {
+                    orbs[i][j].yspeed = 1;
+                    for (var k = 0; k < iMax; k++) {
+                        for (var l = 0; l < jMax; l++) {
+                            if (intersection(orbs[i][j], orbs[k][l])) {
+                                if (orbs[i][j].y < orbs[k][l].y) {
+                                    orbs[i][j].yspeed = 0;
+                                }
                             }
-
                         }
                     }
-                }
-                // handle bouncing and (y)border collision
-                if ((balls[i].y > canvas.height - (balls[i].r + 1))) {
-                    // Update the y vector.
-                    balls[i].yspeed = 0;
+                    // handle bouncing and (y)border collision
+                    if ((orbs[i][j].y > canvas.height - (orbs[i][j].r + 1))) {
+                        // Update the y vector.
+                        orbs[i][j].yspeed = 0;
 
+                    }
+                    orbs[i][j].move((orbs[i][j].x), (orbs[i][j].y += orbs[i][j].yspeed * 5));
+                    orbs[i][j].draw();
                 }
-                balls[i].move((balls[i].x), (balls[i].y += balls[i].yspeed * 5));
-                balls[i].draw();
             }
             //Recursive call
-            window.requestAnimationFrame(repeatme);
+            window.requestAnimationFrame(animation);
         }
-
         //Get the animation going.
-        repeatme();
-        //animation();
+        //repeatme();
+        animation();
     </script>
 </body>
 
