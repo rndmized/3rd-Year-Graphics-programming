@@ -22,24 +22,15 @@
         //"Physics" variables
         var gravity = 0.1; // gravity
 
-        var iMax = 7;
-        var jMax = 8;
-        var orbs = new Array();
 
-        for (i = 0; i < iMax; i++) {
-            orbs[i] = new Array();
-            for (j = 0; j < jMax; j++) {
-                orbs[i][j] = new Ball(50 * (i + 1), 50 * -(j + 1), 25, 1);
-            }
-        }
-
+        var removed = false;
         //Ball Object
-        function Ball(x, y, r, vec) {
+        function Ball(x, y, r, vec, color) {
             this.x = x;
             this.y = y;
             this.r = r;
             this.yspeed = vec;
-            this.color = "white"
+            this.color = color;
             this.selected = false;
             //Ball's Functions
             this.draw = function() {
@@ -62,34 +53,66 @@
                 this.y = ypos;
             };
             this.setColor = function(color) {
-                console.log(color);
                 this.color = color;
                 this.draw();
 
             };
         }
 
+        var iMax = 7;
+        var jMax = 8;
+        var orbs = new Array();
 
+        for (i = 0; i < iMax; i++) {
+            orbs[i] = new Array();
+            for (j = 0; j < jMax; j++) {
+                orbs[i][j] = new Ball(50 * (i + 1), 50 * -(j + 1), 25, 1,getRandomColor());
+            }
+        }
 
         canvas.addEventListener("click", function(event) {
             console.log("click");
             iTemp = -1;
             jTemp = -1;
             dummyBall = new Ball(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop, 1, 0);
-            for (var i = 0; i < iMax; i++) {
-                for (var j = 0; j < jMax; i++) {
-                  var b1 = orbs[i][j].x - dummyBall.x;
-                    if (Math.sqrt((b1*b1) + (b1*b1)) < orbs[i][j].r) {
-                        iTemp = i;
-                        jTemp = j;
-                    }
+            console.log(Math.floor((dummyBall.x + 25) / 50));
+            iTemp = Math.floor((dummyBall.x + 25) / 50) - 1;
+            for (var j = 0; j < jMax; j++) {
+                if (Math.sqrt((orbs[iTemp][j].x - dummyBall.x) * (orbs[iTemp][j].x - dummyBall.x) + (orbs[iTemp][j].y - dummyBall.y) * (orbs[iTemp][j].y - dummyBall.y)) < orbs[iTemp][j].r) {
+                    console.log(orbs[iTemp][j].color);
+                    jTemp = j;
                 }
             }
-            var uball = orbs.splice(iTemp, jTemp, 1);
-            orbs.push(new Ball(50 * (iTemp + 1), -25, 25, 1));
+            var uball = orbs[iTemp].splice(jTemp, 1);
+            orbs[iTemp].push(new Ball(50 * (iTemp + 1), -50, 25, 1,getRandomColor()));
             //ball1.move(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
         });
 
+        function getRandomColor() {
+            var color;
+            var rnd = Math.floor((Math.random() * 5)) + 1;
+            switch (rnd) {
+                case 1:
+                    color = "red";
+                    break;
+                case 2:
+                    color = "yellow";
+                    break;
+                case 3:
+                    color = "blue";
+                    break;
+                case 4:
+                    color = "green";
+                    break;
+                case 5:
+                    color = "purple";
+                    break;
+                default:
+                    color = "magenta";
+            }
+            return color;
+
+        }
 
         function intersection(b1, b2) {
             var a, dx, dy, d;
@@ -110,20 +133,22 @@
 
 
         function animation() {
+
             //Clear Canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             for (var i = 0; i < iMax; i++) {
                 for (var j = 0; j < jMax; j++) {
                     orbs[i][j].yspeed = 1;
-                    for (var k = 0; k < iMax; k++) {
-                        for (var l = 0; l < jMax; l++) {
-                            if (intersection(orbs[i][j], orbs[k][l])) {
-                                if (orbs[i][j].y < orbs[k][l].y) {
+                    for (var k = 0; k < orbs[i].length; k++) {
+                        if (j != k) {
+                            if (intersection(orbs[i][j], orbs[i][k])) {
+                                if (orbs[i][j].y < orbs[i][k].y) {
                                     orbs[i][j].yspeed = 0;
                                 }
                             }
                         }
                     }
+
                     // handle bouncing and (y)border collision
                     if ((orbs[i][j].y > canvas.height - (orbs[i][j].r + 1))) {
                         // Update the y vector.
