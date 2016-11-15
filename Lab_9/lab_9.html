@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>3D Demo</title>
+    <meta charset="UTF-8">
+    <style type="text/css"></style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript">
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        var geometry = new THREE.SphereGeometry(2, 25, 25, 0, Math.PI * 2, 0, Math.PI * 2);
+        var material = new THREE.MeshLambertMaterial({color: 0xff0000, wireframe : false});
+        var cube = new THREE.Mesh(geometry, material);
+        
+        var directionalLight = new THREE.DirectionalLight (0xffffff, 0.5);
+        directionalLight.position.set(0, 1, 2);
+
+        var helper = new THREE.WireframeHelper( cube );
+        helper.material.color.set( 'white' );
+        helper.visible = true; 
+
+        var alpha = 0.0;
+        var color = new THREE.Color("rgb(0, 0, 255)");
+        
+
+        scene.add( helper ); 
+        scene.add(directionalLight); 
+        scene.add(cube);
+
+        
+        camera.position.z = 10;
+        var render = function() {
+            requestAnimationFrame(render);
+            if (alpha < 1){
+                alpha += 0.01;
+            } else {
+                color = getNewColor();
+                alpha = 0.0;
+                console.log( + " alpha " + alpha );
+            }
+            cube.material.color.lerp(color, alpha)
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            //cube.translateX(0.01);
+            renderer.render(scene, camera);
+
+        };
+
+        function getNewColor(){
+            var color;
+            var rnd = Math.random()*3 +1;
+            switch (rnd){
+                case 0:
+                    color = new THREE.Color(255,0,0);
+                    break;
+                case 1:
+                    color = new THREE.Color(0,255,0);
+                    break;
+                case 2:
+                    color = new THREE.Color(0,0,255);
+                    break;
+                default:
+                    color = new THREE.Color(255,0,0);
+
+            }
+            return color;
+        }
+
+
+
+
+        render();
+    </script>
+</body>
+
+</html>
