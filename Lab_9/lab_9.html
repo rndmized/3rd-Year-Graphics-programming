@@ -11,75 +11,103 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script type="text/javascript">
-        var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    //Ref: https://github.com/mrdoob/three.js/blob/master/examples/webgl_lights_spotlight.html
+    //Ref: https://www.sitepoint.com/generating-random-color-values/
 
-        var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+    var translation = 0.03;
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 2, 500);
 
-        var geometry = new THREE.SphereGeometry(2, 25, 25, 0, Math.PI * 2, 0, Math.PI * 2);
-        var material = new THREE.MeshLambertMaterial({color: 0xff0000, wireframe : false});
-        var cube = new THREE.Mesh(geometry, material);
-        
-        var directionalLight = new THREE.DirectionalLight (0xffffff, 0.5);
-        directionalLight.position.set(0, 1, 2);
+    //Creating renderer
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.gammaOutput = true;
+    document.body.appendChild(renderer.domElement);
 
-        var helper = new THREE.WireframeHelper( cube );
-        helper.material.color.set( 'white' );
-        helper.visible = true; 
+    //Sphere Settings
+    var geometry = new THREE.SphereGeometry(4, 75, 75, 0, Math.PI * 2, 0, Math.PI * 2);
+    var material = new THREE.MeshLambertMaterial({
+        color: 0xff0000,
+        wireframe: false
+    });
+    var cube = new THREE.Mesh(geometry, material);
+    cube.castShadow = true;
 
-        var alpha = 0.0;
-        var color = new THREE.Color("rgb(0, 0, 255)");
-        
+    //Floor settings: material, geometry
+    var matFloor = new THREE.MeshPhongMaterial();
+    var geoFloor = new THREE.BoxGeometry(1000, 1, 1000);
+    var mshFloor = new THREE.Mesh(geoFloor, matFloor);
+    matFloor.color.set(0x808080);
+    mshFloor.receiveShadow = true;
+    mshFloor.position.set(0, -10, 0);
 
-        scene.add( helper ); 
-        scene.add(directionalLight); 
-        scene.add(cube);
+    //Light Settings
+    var spotLight = new THREE.SpotLight(0xffffff, 1);
+    camera.position.set(0, 10, 0);
+    spotLight.position.set(25, 40, 35);
+    spotLight.castShadow = true;
+    spotLight.angle = Math.PI / 3;
+    spotLight.distance = 150;
 
-        
-        camera.position.z = 10;
-        var render = function() {
-            requestAnimationFrame(render);
-            if (alpha < 1){
-                alpha += 0.01;
-            } else {
-                color = getNewColor();
-                alpha = 0.0;
-                console.log( + " alpha " + alpha );
-            }
-            cube.material.color.lerp(color, alpha)
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-            //cube.translateX(0.01);
-            renderer.render(scene, camera);
+    /*
+    var directionalLight = new THREE.DirectionalLight (0xffffff, 1);
+    directionalLight.position.set(0, 50, 50);
+    */
 
-        };
+    //Helper to display wireframe around sphere
+    var helper = new THREE.WireframeHelper(cube);
+    helper.material.color.set('green');
+    helper.visible = true;
 
-        function getNewColor(){
-            var color;
-            var rnd = Math.random()*3 +1;
-            switch (rnd){
-                case 0:
-                    color = new THREE.Color(255,0,0);
-                    break;
-                case 1:
-                    color = new THREE.Color(0,255,0);
-                    break;
-                case 2:
-                    color = new THREE.Color(0,0,255);
-                    break;
-                default:
-                    color = new THREE.Color(255,0,0);
+    //Adding elements to scene
+    //scene.add( helper ); 
+    scene.add(mshFloor);
+    //scene.add(directionalLight); 
+    scene.add(cube);
+    scene.add(spotLight);
 
-            }
-            return color;
+    //Camera position
+    var color = new THREE.Color(getRandomColor());
+    camera.position.z = 25;
+    var alphaCount = 0;
+    var alpha = 0.01;
+    var render = function() {
+        //Changing color
+        alphaCount += Math.abs(alpha);
+        if (alphaCount < 0 ) {
+            color = new THREE.Color(getRandomColor());
+            alpha = -alpha;
+            alphaCount = 0;
+        } else if(alphaCount > 1) {
+            cube.material.color = new THREE.Color(getRandomColor());
+            alpha = -alpha;
+            alphaCount = 0;
         }
+        //color = new THREE.Color(getRandomColor());
+        cube.material.color.lerp(color, alpha);
+        
+        //Rotate sphere
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        //Move sphere
+        if (cube.position.x > 10 || cube.position.x < -10) {
+            translation = -translation;
+        }
+        cube.position.x += translation;
+        renderer.render(scene, camera);
+        //Recursive
+        requestAnimationFrame(render);
+    };
 
+    //Returns a random rgb color
+    function getRandomColor() {
+        var hue = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')';
+        return hue;
+    }
 
-
-
-        render();
+    render();
     </script>
 </body>
 
